@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TwoFace socials lol hi</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="Icon.png">
+    <style>
+    @font-face {
+        font-family: 'Andis';
+        src: url('AndisRegular.woff2') format('woff2');
+    }
+    
+    @font-face {
+        font-family: 'Flavors';
+        src: url('Flavors.woff2') format('woff2');
+    }
+    
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        cursor: url('Cursor.png'), auto;
+    }
+    
+    #intro-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.8s ease, visibility 0.8s ease;
+        cursor: url('Cursor.png'), auto;
+    }
+
+    #intro-screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    @keyframes spinAndFade {
+        0% {
+            transform: rotate(0deg) scale(1);
+        }
+        100% {
+            transform: rotate(720deg) scale(0);
+        }
+    }
+
+    .enter-btn {
+        width: 100vw;
+        padding: 20px 0px;
+        font-size: 5rem;
+        color: white;
+        background: transparent;
+        border: 2px solid white;
+        border-radius: 1px;
+        cursor: url('Cursor.png'), auto;
+        font-family: 'Flavors', sans-serif;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+        transform-origin: center center;
+    }
+
+    .enter-btn.spinning {
+        animation: spinAndFade 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .BG-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+        pointer-events: none;
+        filter: blur(8px);
+        transform: scale(1.05);
+    }
+    
+    .Main-Content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        color: white;
+        text-align: center;
+    }
+
+    .main-title {
+        margin: 0 0 40px 0;
+        opacity: 0;
+        transform: scale(0);
+        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.27), opacity 0.8s ease;
+    }
+
+    .main-title.active {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    .title-image {
+        max-width: 320px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    }
+
+    #socials {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        width: 100%;
+    }
+    
+    .social-link-wrapper {
+        position: relative;
+        display: inline-block;
+        perspective: 600px;
+    }
+
+    .social-link-wrapper::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 110px;
+        height: 70px;
+        background-color: #ffffff;
+        border-radius: 1px;
+        opacity: 0;
+        transform: translate(0, 0);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .social-link-wrapper:hover::before {
+        opacity: 1;
+        transform: translate(6px, 8px);
+    }
+
+    .social-link {
+        position: relative;
+        z-index: 1;
+        cursor: url('Cursor.png'), auto;
+        font-family: 'Andis', sans-serif;
+        font-size: 100px;
+        background-color: #AABBFF;
+        color: black;
+        text-decoration: none;
+        padding: 12px 16px;
+        width: 140px;
+        height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        box-sizing: border-box;
+        border-radius: 1px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        transform-style: preserve-3d;
+        transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.27), background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .social-link:hover {
+        transform: scale(1.05);
+        background-color: #b5c5ff;
+    }
+
+    /* Active state for the Schedule button when toggled open: turns white */
+    .social-link.schedule-active {
+        background-color: #ffffff !important;
+    }
+
+    .social-link.schedule-active .button-bg-icon {
+        display: none;
+    }
+
+    .social-link.schedule-active .schedule-arrow {
+        transform: rotate(135deg); /* Points down when active */
+    }
+
+    @keyframes buttonClickAnimation {
+      0% { transform: translateZ(0) scale(0.95); }
+      100% { transform: translateZ(0) scale(1.05); }
+    }
+
+    .social-link-clicked {
+      animation: buttonClickAnimation 0.3s forwards;
+    }
+
+    .link-title {
+        position: absolute;
+        font-size: 1.1rem;
+        bottom: 1px;
+        left: 5px;
+        color: black;
+        z-index: 2;
+        text-align: left;
+    }
+
+    .button-top-right {
+        position: absolute;
+        top: 6px;
+        right: 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        z-index: 2;
+    }
+
+    .status-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+    }
+
+    .status-dot.dot-gray {
+        background-color: #C4CCEB;
+        border: 2px solid #696D7D;
+    }
+
+    .status-dot.dot-green {
+        background-color: #00CC00;
+        border: 2px solid #158120;
+    }
+
+    .follower-count {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: black;
+        opacity: 0.75;
+    }
+
+    .button-bg-icon {
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        width: 64px;
+        height: 64px;
+        object-fit: contain;
+        opacity: 0.5;
+        pointer-events: none;
+        z-index: 1;
+        transition: opacity 0.2s ease;
+    }
+
+    /* Pure CSS Arrow matching the style from your screenshot, rotated to point left initially */
+    .schedule-arrow {
+        display: block;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 20px;
+        height: 20px;
+        border-left: 4px solid rgba(0, 0, 0, 0.35);
+        border-bottom: 4px solid rgba(0, 0, 0, 0.35);
+        transform: rotate(-45deg); /* Points left initially */
+        z-index: 2;
+        pointer-events: none;
+        transition: transform 0.3s ease;
+    }
+
+    .social-link:hover .button-bg-icon {
+        opacity: 0.7;
+    }
+	
+	#tiktok-link .button-bg-icon {
+		opacity: 0.9;
+	}
+	
+	#tiktok-link:hover .button-bg-icon {
+		opacity: 1.0;
+	}
+
+    .live-badge {
+        display: none;
+        position: absolute;
+        top: -8px;
+        left: -12px;
+        background-color: #ffffff;
+        color: black;
+        font-family: 'Verdana', sans-serif;
+        font-size: 0.65rem;
+        font-weight: bold;
+        padding: 2px 5px;
+        border-radius: 1px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        align-items: center;
+        gap: 5px;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    .live-badge.is-live {
+        display: flex;
+    }
+
+    .tiktok-live-badge {
+        background-color: #ffffff;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.3; transform: scale(0.8); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+
+    .hover-card {
+        position: fixed;
+        top: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        pointer-events: none;
+        z-index: 10;
+        opacity: 0;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27), opacity 0.3s ease;
+    }
+
+    .hover-card.slide-left {
+        left: 0;
+        flex-direction: row;
+        transform: translate(-100%, 0);
+    }
+    .hover-card.slide-left.active {
+        opacity: 1;
+        transform: translate(calc(50vw - 420px), 0);
+    }
+
+    .hover-card.slide-right {
+        right: 0;
+        flex-direction: row-reverse;
+        transform: translate(100%, 0);
+    }
+    .hover-card.slide-right.active {
+        opacity: 1;
+        transform: translate(calc(-50vw + 420px), 0);
+    }
+
+    .hover-avatar {
+        width: 70px;
+        height: 70px;
+        border: 2px solid white;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .hover-dialogue {
+        position: relative;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 10px 16px;
+        font-family: 'Verdana', sans-serif;
+        font-size: 0.95rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        max-width: 180px;
+        text-align: left;
+    }
+
+    /* Modal / Popup Schedule Styles */
+    #schedule-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9998;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    #schedule-modal.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .schedule-box {
+        background: #AABBFF;
+        border: 1px solid black;
+        padding: 25px 30px;
+        border-radius: 1px;
+        font-family: 'Andis', sans-serif;
+        color: black;
+        width: 320px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        text-align: left;
+        position: relative;
+    }
+
+    .schedule-box h2 {
+        margin: 0 0 15px 0;
+        font-size: 1.8rem;
+        border-bottom: 2px solid black;
+        padding-bottom: 5px;
+    }
+
+    .schedule-list-item {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+
+    .schedule-list-day {
+        font-weight: bold;
+    }
+
+    .schedule-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: transparent;
+        border: none;
+        font-size: 1.5rem;
+        cursor: url('Cursor.png'), auto;
+        font-weight: bold;
+    }
+	
+    footer {
+        position: fixed;
+        bottom: 10px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        z-index: 10;
+        color: white;
+        font-family: 'Verdana', sans-serif;
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    </style>
+</head>
+<body>
+
+    <div id="intro-screen">
+        <button id="enter-btn" class="enter-btn">Enter</button>
+    </div>
+
+    <!-- Schedule Popup Modal -->
+    <div id="schedule-modal">
+        <div class="schedule-box">
+            <button class="schedule-close-btn" id="close-schedule">&times;</button>
+            <h2>Weekly Streaming Schedule</h2>
+            <div class="schedule-list-item">
+                <span class="schedule-list-day">YouTube lives on:</span> Sunday, Wednesday, Thursday.
+            </div>
+            <div class="schedule-list-item">
+                <span class="schedule-list-day">TikTok lives on:</span> Monday.
+            </div>
+			
+			<div class="schedule-list-item">
+                <span class="schedule-list-day">*Lives start between 8PM-9PM*</span>
+            </div>
+			
+			<div class="schedule-list-item">
+                <span class="schedule-list-day">Join the Discord Server to be updated!</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="BG-video">
+        <video id="bg-vid" autoplay muted loop playsinline class="BG-video">
+            <source src="BGvideo.mp4" type="video/mp4">
+        </video>
+    </div>
+    
+    <div class="Main-Content">
+        <h1 id="main-title" class="main-title">
+            <img src="TwoFaceTitle.png" alt="TwoFace" class="title-image">
+        </h1>
+
+        <nav id="socials">
+            <div class="social-link-wrapper">
+                <a href="https://discord.com/invite/NU8pPas52k" target="_blank" class="social-link" 
+                   data-dialogue="The palace of the goats" 
+                   data-img="Dialogue1.png">
+                    <span class="link-title">Discord</span>
+                    <div class="button-top-right">
+                        <span id="discord-online" class="follower-count">--</span>
+                        <span id="discord-online-dot" class="status-dot dot-gray"></span>
+                        <span id="discord-total" class="follower-count">--</span>
+                        <span id="discord-total-dot" class="status-dot dot-gray"></span>
+                    </div>
+                    <img src="Discord.png" class="button-bg-icon" alt="Discord">
+                </a>
+            </div>
+
+            <div class="social-link-wrapper">
+                <a href="https://www.instagram.com/yuval_alush1" target="_blank" class="social-link" 
+                   data-dialogue="I'm a handsome beautiful hunk" 
+                   data-img="Dialogue2.png">
+                    <span class="link-title">Instagram</span>
+                    <div class="button-top-right">
+                        <span id="instagram-count" class="follower-count"></span>
+                    </div>
+                    <img src="Instagram.png" class="button-bg-icon" alt="Instagram">
+                </a>
+            </div>
+            
+            <div class="social-link-wrapper">
+                <a href="https://www.tiktok.com/@twoface_yda/" target="_blank" id="tiktok-link" class="social-link" 
+                    data-dialogue="Watch my short videos and streams!" 
+                    data-img="Dialogue3.png">
+                    <span class="link-title">TikTok</span>
+                    <div class="button-top-right">
+                        <span id="tiktok-count" class="follower-count">--</span>
+                        <span class="status-dot dot-gray"></span>
+                    </div>
+                    <img src="TikTok.png" class="button-bg-icon" alt="TikTok">
+                </a>
+                <div id="tiktok-live-badge" class="live-badge tiktok-live-badge">
+                    <span class="live-dot"></span>LIVE NOW
+                </div>
+            </div>
+
+            <div class="social-link-wrapper">
+                <a href="https://www.youtube.com/@TwoFace_YDA/live" target="_blank" id="youtube-link" class="social-link" 
+                   data-dialogue="Mostly stream and post videos, visit me there!" 
+                   data-img="Dialogue4.png">
+                    <span class="link-title">YouTube</span>
+                    <div class="button-top-right">
+                        <span id="youtube-count" class="follower-count">--</span>
+                        <span class="status-dot dot-gray"></span>
+                    </div>
+                    <img src="YouTube.png" class="button-bg-icon" alt="YouTube">
+                </a>
+                <div id="youtube-live-badge" class="live-badge">
+                    <span class="live-dot"></span>LIVE NOW
+                </div>
+            </div>
+
+            <div class="social-link-wrapper">
+                <a href="http://paypal.com/paypalme/TwoFaceYDA" target="_blank" class="social-link" 
+                   data-dialogue="You can support me!" 
+                   data-img="Dialogue5.png">
+                    <span class="link-title">PayPal</span>
+                    <div class="button-top-right">
+                        <span id="support-count" class="follower-count"></span>
+                    </div>
+                    <img src="PayPal.png" class="button-bg-icon" alt="Support">
+                </a>
+            </div>
+
+            <!-- Show Schedule Button with CSS-drawn Arrow (points left initially, rotates to point down when active) -->
+            <div class="social-link-wrapper">
+                <a href="#" id="schedule-btn" class="social-link" 
+                   data-dialogue="My weekly streaming schedule!" 
+                   data-img="Dialogue6.png">
+                    <span class="link-title">Show Schedule</span>
+                    <div class="schedule-arrow"></div>
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <div id="hover-card" class="hover-card slide-left">
+        <img id="hover-img" class="hover-avatar" src="Icon.png" alt="Preview">
+        <div id="hover-dialogue" class="hover-dialogue">Hello!</div>
+    </div>
+    
+    <footer>
+        <p><small>&copy; <span id="copyright-year"></span> All rights Reserved to TwoFace</small></p>
+    </footer>
+    
+<script>
+    function setupContextMenuBlock() {
+        document.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
+    }
+
+    function setupIntroScreen() {
+        const enterBtn = document.getElementById('enter-btn');
+        const introScreen = document.getElementById('intro-screen');
+        const bgVid = document.getElementById('bg-vid');
+        const mainTitle = document.getElementById('main-title');
+
+        enterBtn.addEventListener('click', () => {
+            enterBtn.classList.add('spinning');
+            
+            introScreen.classList.add('hidden');
+            
+            bgVid.muted = true; 
+            bgVid.play();
+
+            setTimeout(() => {
+                mainTitle.classList.add('active');
+            }, 200);
+        });
+    }
+
+    function setupHoverCards() {
+        const hoverCard = document.getElementById('hover-card');
+        const hoverImg = document.getElementById('hover-img');
+        const hoverDialogue = document.getElementById('hover-dialogue');
+        const socialLinks = document.querySelectorAll('.social-link');
+
+        socialLinks.forEach((link, index) => {
+            link.addEventListener('mouseenter', (e) => {
+                const rect = e.target.getBoundingClientRect();
+                
+                const dialogueText = e.target.getAttribute('data-dialogue');
+                const imgSrc = e.target.getAttribute('data-img');
+
+                if (dialogueText) hoverDialogue.textContent = dialogueText;
+                if (imgSrc) hoverImg.src = imgSrc;
+
+                const side = index % 2 === 0 ? 'left' : 'right';
+
+                hoverCard.classList.remove('slide-left', 'slide-right');
+                hoverCard.classList.add(`slide-${side}`);
+
+                const linkCenterY = rect.top + (rect.height / 2) - (hoverCard.offsetHeight / 2);
+                hoverCard.style.top = `${linkCenterY}px`;
+                
+                requestAnimationFrame(() => {
+                    hoverCard.classList.add('active');
+                });
+            });
+
+            link.addEventListener('mouseleave', () => {
+                hoverCard.classList.remove('active');
+            });
+
+            link.addEventListener('click', (e) => {
+                const url = link.href;
+                if (link.id === 'schedule-btn') {
+                    e.preventDefault();
+                    link.classList.add('social-link-clicked');
+                    setTimeout(() => {
+                        link.classList.remove('social-link-clicked');
+                        link.classList.add('schedule-active');
+                        document.getElementById('schedule-modal').classList.add('active');
+                    }, 300);
+                    return;
+                }
+
+                e.preventDefault();
+                link.classList.add('social-link-clicked');
+                setTimeout(() => {
+                    link.classList.remove('social-link-clicked');
+                    window.open(url, '_blank');
+                }, 100);
+            });
+        });
+
+        // Close modal handlers
+        const modal = document.getElementById('schedule-modal');
+        const closeBtn = document.getElementById('close-schedule');
+        const scheduleBtn = document.getElementById('schedule-btn');
+
+        function closeModal() {
+            modal.classList.remove('active');
+            scheduleBtn.classList.remove('schedule-active');
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    const LIVE_STATUS_WORKER_URL = 'https://twoface-live-checker.twofaceholder.workers.dev';
+
+    async function pollLiveStatus() {
+        try {
+            const res = await fetch(LIVE_STATUS_WORKER_URL);
+            const data = await res.json();
+
+            const ytCount = document.getElementById('youtube-count');
+            if (ytCount) ytCount.textContent = data.subs ?? '--';
+
+            const badge = document.getElementById('youtube-live-badge');
+            if (badge) badge.classList.toggle('is-live', !!data.isLive);
+
+            const tiktokCount = document.getElementById('tiktok-count');
+            const tiktokHandle = document.getElementById('tiktok-handle');
+            if (tiktokCount) tiktokCount.textContent = data.tiktok ?? '--';
+            if (tiktokHandle) tiktokHandle.textContent = data.tiktokHandle ?? '@--';
+
+            const tiktokBadge = document.getElementById('tiktok-live-badge');
+            if (tiktokBadge) tiktokBadge.classList.toggle('is-live', !!data.tiktokLive);
+
+        } catch (err) {
+            console.error('Error polling social metrics:', err);
+        }
+    }
+
+    function setupYouTubePolling() {
+        pollLiveStatus();
+        setInterval(pollLiveStatus, 30000);
+    }
+    
+    const DISCORD_INVITE_CODE = 'NU8pPas52k';
+
+    async function fetchDiscordData() {
+        const onlineEl = document.getElementById('discord-online');
+        const totalEl = document.getElementById('discord-total');
+        const onlineDot = document.getElementById('discord-online-dot');
+        const totalDot = document.getElementById('discord-total-dot');
+
+        try {
+            const response = await fetch(`https://discord.com/api/v10/invites/${DISCORD_INVITE_CODE}?with_counts=true`);
+            const data = await response.json();
+
+            if (data && data.approximate_presence_count !== undefined) {
+                onlineEl.textContent = data.approximate_presence_count;
+                totalEl.textContent = data.approximate_member_count;
+
+                onlineDot.classList.remove('dot-gray');
+                onlineDot.classList.add('dot-green');
+
+                totalDot.classList.remove('dot-green');
+                totalDot.classList.add('dot-gray');
+            } else {
+                onlineEl.textContent = '--';
+                totalEl.textContent = '--';
+                onlineDot.classList.remove('dot-green');
+                onlineDot.classList.add('dot-gray');
+                totalDot.classList.remove('dot-green');
+                totalDot.classList.add('dot-gray');
+            }
+        } catch (err) {
+            console.error('Error fetching Discord data:', err);
+            onlineEl.textContent = '--';
+            totalEl.textContent = '--';
+            onlineDot.classList.remove('dot-green');
+            onlineDot.classList.add('dot-gray');
+            totalDot.classList.remove('dot-green');
+            totalDot.classList.add('dot-gray');
+        }
+    }
+
+    function updateCopyrightYear() {
+        const yearEl = document.getElementById('copyright-year');
+        if (yearEl) {
+            yearEl.textContent = new Date().getFullYear();
+        }
+    }
+
+    async function initializeApp() {    
+        setupContextMenuBlock();
+        setupIntroScreen();
+        setupHoverCards();
+        setupYouTubePolling();
+        fetchDiscordData();
+        updateCopyrightYear();      
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    } else {
+        initializeApp();
+    }
+</script>
+</body>
+</html>
