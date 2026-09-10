@@ -246,8 +246,8 @@
         .status-dot {
             display: inline-block;
             flex: 0 0 auto;
-            width: 10px;
-            height: 10px;
+            width: 9px;
+            height: 9px;
             border: 2px solid;
             border-radius: 50%;
         }
@@ -264,7 +264,7 @@
 
         .follower-count {
             color: #000;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             line-height: 1;
             opacity: 0.75;
@@ -334,6 +334,14 @@
 
         .live-badge.is-live {
             display: flex;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #e00000;
+            animation: pulse 1.2s infinite;
         }
 
         @keyframes pulse {
@@ -689,6 +697,7 @@
                         <img src="TikTok.png" class="button-bg-icon" alt="" aria-hidden="true">
                     </a>
                     <div id="tiktok-live-badge" class="live-badge">
+                        <span class="live-dot"></span>
                         LIVE NOW
                     </div>
                 </div>
@@ -711,6 +720,7 @@
                         <img src="YouTube.png" class="button-bg-icon" alt="" aria-hidden="true">
                     </a>
                     <div id="youtube-live-badge" class="live-badge">
+                        <span class="live-dot"></span>
                         LIVE NOW
                     </div>
                 </div>
@@ -959,10 +969,6 @@
                         return;
                     }
 
-                    /*
-                     * On a phone, the first tap shows the dialogue.
-                     * A second tap opens the social link.
-                     */
                     if (isTouchLayout() && !link.dataset.dialogueShown) {
                         event.preventDefault();
                         link.dataset.dialogueShown = "true";
