@@ -1,781 +1,1164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>TwoFace socials lol hi</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#000000">
+    <title>TwoFace socials</title>
     <link rel="icon" type="image/png" href="Icon.png">
+
     <style>
-    @font-face {
-        font-family: 'Andis';
-        src: url('AndisRegular.woff2') format('woff2');
-    }
-    
-    @font-face {
-        font-family: 'Flavors';
-        src: url('Flavors.woff2') format('woff2');
-    }
-    
-    html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        cursor: url('Cursor.png'), auto;
-    }
-    
-    #intro-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        transition: opacity 0.8s ease, visibility 0.8s ease;
-        cursor: url('Cursor.png'), auto;
-    }
-
-    #intro-screen.hidden {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-    }
-
-    @keyframes spinAndFade {
-        0% {
-            transform: rotate(0deg) scale(1);
+        @font-face {
+            font-family: "Andis";
+            src: url("AndisRegular.woff2") format("woff2");
+            font-display: swap;
         }
-        100% {
-            transform: rotate(720deg) scale(0);
+
+        @font-face {
+            font-family: "Flavors";
+            src: url("Flavors.woff2") format("woff2");
+            font-display: swap;
         }
-    }
 
-    .enter-btn {
-        width: 100vw;
-        padding: 20px 0px;
-        font-size: 5rem;
-        color: white;
-        background: transparent;
-        border: 2px solid white;
-        border-radius: 1px;
-        cursor: url('Cursor.png'), auto;
-        font-family: 'Flavors', sans-serif;
-        transition: transform 0.2s ease, background-color 0.2s ease;
-        transform-origin: center center;
-    }
+        :root {
+            --button-color: #aabbff;
+            --button-hover-color: #b5c5ff;
+            --text-color: #ffffff;
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-top: env(safe-area-inset-top, 0px);
+        }
 
-    .enter-btn.spinning {
-        animation: spinAndFade 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
 
-    .BG-video {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
-        z-index: -1;
-        pointer-events: none;
-        filter: blur(8px);
-        transform: scale(1.05);
-    }
-    
-    .Main-Content {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        color: white;
-        text-align: center;
-    }
+        html {
+            min-height: 100%;
+            background: #000;
+        }
 
-    .main-title {
-        margin: 0 0 40px 0;
-        opacity: 0;
-        transform: scale(0);
-        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.27), opacity 0.8s ease;
-    }
+        body {
+            min-width: 320px;
+            min-height: 100%;
+            margin: 0;
+            overflow-x: hidden;
+            background: #000;
+            color: var(--text-color);
+            cursor: url("Cursor.png"), auto;
+        }
 
-    .main-title.active {
-        opacity: 1;
-        transform: scale(1.2);
-    }
+        button,
+        a {
+            cursor: url("Cursor.png"), pointer;
+        }
 
-    .title-image {
-        max-width: 320px;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
-    }
+        .app {
+            position: relative;
+            z-index: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+            isolation: isolate;
+        }
 
-    #socials {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        align-items: center;
-        width: 100%;
-    }
-    
-    .social-link-wrapper {
-        position: relative;
-        display: inline-block;
-        perspective: 600px;
-    }
+        .background-layer {
+            position: fixed;
+            z-index: -1;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            background: #000;
+        }
 
-    .social-link-wrapper::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 110px;
-        height: 70px;
-        background-color: #ffffff;
-        border-radius: 1px;
-        opacity: 0;
-        transform: translate(0, 0);
-        transition: opacity 0.25s ease, transform 0.25s ease;
-        z-index: 0;
-        pointer-events: none;
-    }
+        .background-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(7px);
+            transform: scale(1.05);
+        }
 
-    .social-link-wrapper:hover::before {
-        opacity: 1;
-        transform: translate(6px, 8px);
-    }
+        .background-layer::after {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.12);
+            content: "";
+        }
 
-    .social-link {
-        position: relative;
-        z-index: 1;
-        cursor: url('Cursor.png'), auto;
-        font-family: 'Andis', sans-serif;
-        font-size: 100px;
-        background-color: #AABBFF;
-        color: black;
-        text-decoration: none;
-        padding: 12px 16px;
-        width: 140px;
-        height: 100px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        box-sizing: border-box;
-        border-radius: 1px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-        transform-style: preserve-3d;
-        transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.27), background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-    }
+        .main-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex: 1 0 auto;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100dvh - 52px);
+            padding: 32px 16px;
+            color: var(--text-color);
+            text-align: center;
+        }
 
-    .social-link:hover {
-        transform: scale(1.05);
-        background-color: #b5c5ff;
-    }
+        .main-title {
+            margin: 0 0 40px;
+            opacity: 0;
+            transform: scale(0);
+            transition:
+                transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.27),
+                opacity 0.8s ease;
+        }
 
-    /* Active state for the Schedule button when toggled open: turns white */
-    .social-link.schedule-active {
-        background-color: #ffffff !important;
-    }
+        .main-title.active {
+            opacity: 1;
+            transform: scale(1.2);
+        }
 
-    .social-link.schedule-active .button-bg-icon {
-        display: none;
-    }
+        .title-image {
+            display: block;
+            width: min(320px, 82vw);
+            height: auto;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        }
 
-    .social-link.schedule-active .schedule-arrow {
-        transform: rotate(135deg); /* Points down when active */
-    }
+        .socials {
+            display: flex;
+            flex: 0 0 auto;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
 
-    @keyframes buttonClickAnimation {
-      0% { transform: translateZ(0) scale(0.95); }
-      100% { transform: translateZ(0) scale(1.05); }
-    }
+        .social-link-wrapper {
+            position: relative;
+            display: inline-block;
+            perspective: 600px;
+        }
 
-    .social-link-clicked {
-      animation: buttonClickAnimation 0.3s forwards;
-    }
+        .social-link-wrapper::before {
+            position: absolute;
+            z-index: 0;
+            top: 0;
+            left: 0;
+            width: 110px;
+            height: 70px;
+            border-radius: 1px;
+            background: #fff;
+            content: "";
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(0, 0);
+            transition:
+                opacity 0.25s ease,
+                transform 0.25s ease;
+        }
 
-    .link-title {
-        position: absolute;
-        font-size: 1.1rem;
-        bottom: 1px;
-        left: 5px;
-        color: black;
-        z-index: 2;
-        text-align: left;
-    }
+        .social-link-wrapper:hover::before,
+        .social-link-wrapper:focus-within::before {
+            opacity: 1;
+            transform: translate(6px, 8px);
+        }
 
-    .button-top-right {
-        position: absolute;
-        top: 6px;
-        right: 8px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        z-index: 2;
-    }
+        .social-link {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            width: 140px;
+            height: 100px;
+            overflow: hidden;
+            border: 0;
+            border-radius: 1px;
+            background: var(--button-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            color: #000;
+            font-family: "Andis", sans-serif;
+            font-size: 100px;
+            line-height: 1;
+            text-decoration: none;
+            transform-style: preserve-3d;
+            transition:
+                transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.27),
+                background-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
 
-    .status-dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        display: inline-block;
-        flex-shrink: 0;
-    }
+        .social-link:hover,
+        .social-link:focus-visible {
+            background: var(--button-hover-color);
+            outline: none;
+            transform: scale(1.05);
+        }
 
-    .status-dot.dot-gray {
-        background-color: #C4CCEB;
-        border: 2px solid #696D7D;
-    }
+        .social-link:focus-visible {
+            box-shadow:
+                0 0 0 3px #fff,
+                0 4px 12px rgba(0, 0, 0, 0.25);
+        }
 
-    .status-dot.dot-green {
-        background-color: #00CC00;
-        border: 2px solid #158120;
-    }
+        .social-link.schedule-active {
+            background: #fff;
+        }
 
-    .follower-count {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: black;
-        opacity: 0.75;
-    }
+        .social-link.schedule-active .schedule-arrow {
+            transform: rotate(135deg);
+        }
 
-    .button-bg-icon {
-        position: absolute;
-        top: 3px;
-        right: 3px;
-        width: 64px;
-        height: 64px;
-        object-fit: contain;
-        opacity: 0.5;
-        pointer-events: none;
-        z-index: 1;
-        transition: opacity 0.2s ease;
-    }
+        .social-link-clicked {
+            animation: button-click 0.3s forwards;
+        }
 
-    /* Pure CSS Arrow matching the style from your screenshot, rotated to point left initially */
-    .schedule-arrow {
-        display: block;
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        width: 20px;
-        height: 20px;
-        border-left: 4px solid rgba(0, 0, 0, 0.35);
-        border-bottom: 4px solid rgba(0, 0, 0, 0.35);
-        transform: rotate(-45deg); /* Points left initially */
-        z-index: 2;
-        pointer-events: none;
-        transition: transform 0.3s ease;
-    }
+        @keyframes button-click {
+            from {
+                transform: translateZ(0) scale(0.95);
+            }
 
-    .social-link:hover .button-bg-icon {
-        opacity: 0.7;
-    }
-	
-	#tiktok-link .button-bg-icon {
-		opacity: 0.9;
-	}
-	
-	#tiktok-link:hover .button-bg-icon {
-		opacity: 1.0;
-	}
+            to {
+                transform: translateZ(0) scale(1.05);
+            }
+        }
 
-    .live-badge {
-        display: none;
-        position: absolute;
-        top: -8px;
-        left: -12px;
-        background-color: #ffffff;
-        color: black;
-        font-family: 'Verdana', sans-serif;
-        font-size: 0.65rem;
-        font-weight: bold;
-        padding: 2px 5px;
-        border-radius: 1px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        align-items: center;
-        gap: 5px;
-        z-index: 10;
-        pointer-events: none;
-    }
+        .link-title {
+            position: absolute;
+            z-index: 2;
+            bottom: 1px;
+            left: 5px;
+            color: #000;
+            font-size: 1.1rem;
+            line-height: 1;
+            text-align: left;
+        }
 
-    .live-badge.is-live {
-        display: flex;
-    }
+        .button-top-right {
+            position: absolute;
+            z-index: 2;
+            top: 6px;
+            right: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
-    .tiktok-live-badge {
-        background-color: #ffffff;
-    }
+        .status-dot {
+            display: inline-block;
+            flex: 0 0 auto;
+            width: 10px;
+            height: 10px;
+            border: 2px solid;
+            border-radius: 50%;
+        }
 
-    @keyframes pulse {
-        0% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.3; transform: scale(0.8); }
-        100% { opacity: 1; transform: scale(1); }
-    }
+        .dot-gray {
+            border-color: #696d7d;
+            background: #c4cceb;
+        }
 
-    .hover-card {
-        position: fixed;
-        top: 0;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        pointer-events: none;
-        z-index: 10;
-        opacity: 0;
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27), opacity 0.3s ease;
-    }
+        .dot-green {
+            border-color: #158120;
+            background: #00cc00;
+        }
 
-    .hover-card.slide-left {
-        left: 0;
-        flex-direction: row;
-        transform: translate(-100%, 0);
-    }
-    .hover-card.slide-left.active {
-        opacity: 1;
-        transform: translate(calc(50vw - 420px), 0);
-    }
+        .follower-count {
+            color: #000;
+            font-size: 1.3rem;
+            font-weight: bold;
+            line-height: 1;
+            opacity: 0.75;
+        }
 
-    .hover-card.slide-right {
-        right: 0;
-        flex-direction: row-reverse;
-        transform: translate(100%, 0);
-    }
-    .hover-card.slide-right.active {
-        opacity: 1;
-        transform: translate(calc(-50vw + 420px), 0);
-    }
+        .button-bg-icon {
+            position: absolute;
+            z-index: 1;
+            top: 3px;
+            right: 3px;
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            opacity: 0.5;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
 
-    .hover-avatar {
-        width: 70px;
-        height: 70px;
-        border: 2px solid white;
-        object-fit: cover;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
+        .social-link:hover .button-bg-icon,
+        .social-link:focus-visible .button-bg-icon {
+            opacity: 0.7;
+        }
 
-    .hover-dialogue {
-        position: relative;
-        background: rgba(0, 0, 0, 0.85);
-        color: white;
-        padding: 10px 16px;
-        font-family: 'Verdana', sans-serif;
-        font-size: 0.95rem;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        max-width: 180px;
-        text-align: left;
-    }
+        #tiktok-link .button-bg-icon {
+            opacity: 0.9;
+        }
 
-    /* Modal / Popup Schedule Styles */
-    #schedule-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9998;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
+        #tiktok-link:hover .button-bg-icon,
+        #tiktok-link:focus-visible .button-bg-icon {
+            opacity: 1;
+        }
 
-    #schedule-modal.active {
-        opacity: 1;
-        visibility: visible;
-    }
+        .schedule-arrow {
+            position: absolute;
+            z-index: 2;
+            top: 15px;
+            right: 15px;
+            display: block;
+            width: 20px;
+            height: 20px;
+            border-bottom: 4px solid rgba(0, 0, 0, 0.35);
+            border-left: 4px solid rgba(0, 0, 0, 0.35);
+            pointer-events: none;
+            transform: rotate(-45deg);
+            transition: transform 0.3s ease;
+        }
 
-    .schedule-box {
-        background: #AABBFF;
-        border: 1px solid black;
-        padding: 25px 30px;
-        border-radius: 1px;
-        font-family: 'Andis', sans-serif;
-        color: black;
-        width: 320px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-        text-align: left;
-        position: relative;
-    }
+        .live-badge {
+            position: absolute;
+            z-index: 3;
+            top: -8px;
+            left: -12px;
+            display: none;
+            align-items: center;
+            gap: 5px;
+            padding: 2px 5px;
+            border-radius: 1px;
+            background: #fff;
+            color: #000;
+            font-family: Verdana, sans-serif;
+            font-size: 0.65rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
 
-    .schedule-box h2 {
-        margin: 0 0 15px 0;
-        font-size: 1.8rem;
-        border-bottom: 2px solid black;
-        padding-bottom: 5px;
-    }
+        .live-badge.is-live {
+            display: flex;
+        }
 
-    .schedule-list-item {
-        font-size: 1.2rem;
-        margin-bottom: 10px;
-    }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
 
-    .schedule-list-day {
-        font-weight: bold;
-    }
+            50% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+        }
 
-    .schedule-close-btn {
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        background: transparent;
-        border: none;
-        font-size: 1.5rem;
-        cursor: url('Cursor.png'), auto;
-        font-weight: bold;
-    }
-	
-    footer {
-        position: fixed;
-        bottom: 10px;
-        left: 0;
-        width: 100%;
-        text-align: center;
-        z-index: 10;
-        color: white;
-        font-family: 'Verdana', sans-serif;
-        opacity: 0.7;
-        pointer-events: none;
-    }
+        .hover-card {
+            position: fixed;
+            z-index: 20;
+            top: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: min(320px, calc(100vw - 24px));
+            pointer-events: none;
+            opacity: 0;
+            transition:
+                transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27),
+                opacity 0.3s ease;
+        }
+
+        .hover-card.slide-left {
+            left: 0;
+            flex-direction: row;
+            transform: translateX(-115%);
+        }
+
+        .hover-card.slide-left.active {
+            left: max(12px, calc(50vw - 420px));
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .hover-card.slide-right {
+            right: 0;
+            flex-direction: row-reverse;
+            transform: translateX(115%);
+        }
+
+        .hover-card.slide-right.active {
+            right: max(12px, calc(50vw - 420px));
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .hover-avatar {
+            flex: 0 0 auto;
+            width: 70px;
+            height: 70px;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            object-fit: cover;
+        }
+
+        .hover-dialogue {
+            position: relative;
+            max-width: 220px;
+            padding: 10px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.85);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-family: Verdana, sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.35;
+            text-align: left;
+        }
+
+        .schedule-modal {
+            position: fixed;
+            z-index: 30;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            height: auto;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition:
+                opacity 0.3s ease,
+                visibility 0.3s ease;
+        }
+
+        .schedule-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .schedule-box {
+            position: relative;
+            width: min(380px, calc(100vw - 32px));
+            max-height: calc(100dvh - 32px);
+            overflow-y: auto;
+            padding: 25px 30px;
+            border: 1px solid #000;
+            border-radius: 1px;
+            background: var(--button-color);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            color: #000;
+            font-family: "Andis", sans-serif;
+            text-align: left;
+        }
+
+        .schedule-box h2 {
+            margin: 0 36px 15px 0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #000;
+            font-size: clamp(1.35rem, 6vw, 1.8rem);
+            line-height: 1.1;
+        }
+
+        .schedule-list-item {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            line-height: 1.25;
+        }
+
+        .schedule-list-day {
+            font-weight: bold;
+        }
+
+        .schedule-close-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            border: 0;
+            background: transparent;
+            color: #000;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .site-footer {
+            position: relative;
+            z-index: 1;
+            flex: 0 0 auto;
+            width: 100%;
+            padding: 8px 16px max(8px, var(--safe-bottom));
+            color: #fff;
+            font-family: Verdana, sans-serif;
+            opacity: 0.7;
+            text-align: center;
+        }
+
+        .site-footer p {
+            margin: 0;
+        }
+
+        .intro-screen {
+            position: fixed;
+            z-index: 100;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            opacity: 1;
+            visibility: visible;
+            transition:
+                opacity 0.8s ease,
+                visibility 0.8s ease;
+        }
+
+        .intro-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .enter-btn {
+            width: min(100vw, 900px);
+            padding: 20px 0;
+            border: 2px solid #fff;
+            border-radius: 1px;
+            background: transparent;
+            color: #fff;
+            font-family: "Flavors", sans-serif;
+            font-size: clamp(3rem, 12vw, 5rem);
+            line-height: 1;
+            transition:
+                transform 0.2s ease,
+                background-color 0.2s ease;
+        }
+
+        .enter-btn:hover,
+        .enter-btn:focus-visible {
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
+        }
+
+        .enter-btn.spinning {
+            animation: spin-and-fade 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes spin-and-fade {
+            from {
+                transform: rotate(0deg) scale(1);
+            }
+
+            to {
+                transform: rotate(720deg) scale(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-content {
+                justify-content: flex-start;
+                min-height: 0;
+                padding:
+                    max(24px, var(--safe-top))
+                    16px
+                    24px;
+            }
+
+            .main-title {
+                margin-bottom: 28px;
+            }
+
+            .main-title.active {
+                transform: scale(1);
+            }
+
+            .social-link {
+                width: min(140px, 82vw);
+            }
+
+            .hover-card,
+            .hover-card.slide-left,
+            .hover-card.slide-right {
+                top: auto !important;
+                right: auto !important;
+                bottom: max(16px, var(--safe-bottom));
+                left: 50% !important;
+                width: min(90vw, 340px);
+                justify-content: center;
+                transform: translate(-50%, 140%) !important;
+            }
+
+            .hover-card.active,
+            .hover-card.slide-left.active,
+            .hover-card.slide-right.active {
+                transform: translate(-50%, 0) !important;
+            }
+
+            .hover-avatar {
+                width: 56px;
+                height: 56px;
+            }
+
+            .hover-dialogue {
+                flex: 1;
+                max-width: none;
+                font-size: 0.85rem;
+            }
+
+            .schedule-box {
+                width: min(320px, calc(100vw - 32px));
+                padding: 24px 20px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
-<body>
 
-    <div id="intro-screen">
-        <button id="enter-btn" class="enter-btn">Enter</button>
+<body>
+    <div class="app">
+        <div class="background-layer" aria-hidden="true">
+            <video id="bg-vid" class="background-video" autoplay loop muted playsinline>
+                <source src="BGVideo.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <main class="main-content">
+            <h1 id="main-title" class="main-title">
+                <img src="TwoFaceTitle.png" alt="TwoFace" class="title-image">
+            </h1>
+
+            <nav id="socials" class="socials" aria-label="TwoFace social links">
+                <div class="social-link-wrapper">
+                    <a
+                        href="https://discord.com/invite/NU8pPas52k"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="social-link"
+                        data-dialogue="The palace of the goats"
+                        data-img="Dialogue1.png"
+                    >
+                        <span class="link-title">Discord</span>
+                        <span class="button-top-right" aria-label="Discord member counts">
+                            <span id="discord-online" class="follower-count">--</span>
+                            <span id="discord-online-dot" class="status-dot dot-gray"></span>
+                            <span id="discord-total" class="follower-count">--</span>
+                            <span id="discord-total-dot" class="status-dot dot-gray"></span>
+                        </span>
+                        <img src="Discord.png" class="button-bg-icon" alt="" aria-hidden="true">
+                    </a>
+                </div>
+
+                <div class="social-link-wrapper">
+                    <a
+                        href="https://www.instagram.com/yuval_alush1"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="social-link"
+                        data-dialogue="I'm a handsome beautiful hunk"
+                        data-img="Dialogue2.png"
+                    >
+                        <span class="link-title">Instagram</span>
+                        <span class="button-top-right">
+                            <span id="instagram-count" class="follower-count"></span>
+                        </span>
+                        <img src="Instagram.png" class="button-bg-icon" alt="" aria-hidden="true">
+                    </a>
+                </div>
+
+                <div class="social-link-wrapper">
+                    <a
+                        href="https://www.tiktok.com/@twoface_yda/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        id="tiktok-link"
+                        class="social-link"
+                        data-dialogue="Watch my short videos and streams!"
+                        data-img="Dialogue3.png"
+                    >
+                        <span class="link-title">TikTok</span>
+                        <span class="button-top-right">
+                            <span id="tiktok-count" class="follower-count">--</span>
+                            <span class="status-dot dot-gray"></span>
+                        </span>
+                        <img src="TikTok.png" class="button-bg-icon" alt="" aria-hidden="true">
+                    </a>
+                    <div id="tiktok-live-badge" class="live-badge">
+                        LIVE NOW
+                    </div>
+                </div>
+
+                <div class="social-link-wrapper">
+                    <a
+                        href="https://www.youtube.com/@TwoFace_YDA/live"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        id="youtube-link"
+                        class="social-link"
+                        data-dialogue="Mostly stream and post videos, visit me there!"
+                        data-img="Dialogue4.png"
+                    >
+                        <span class="link-title">YouTube</span>
+                        <span class="button-top-right">
+                            <span id="youtube-count" class="follower-count">--</span>
+                            <span class="status-dot dot-gray"></span>
+                        </span>
+                        <img src="YouTube.png" class="button-bg-icon" alt="" aria-hidden="true">
+                    </a>
+                    <div id="youtube-live-badge" class="live-badge">
+                        LIVE NOW
+                    </div>
+                </div>
+
+                <div class="social-link-wrapper">
+                    <a
+                        href="https://paypal.com/paypalme/TwoFaceYDA"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="social-link"
+                        data-dialogue="You can support me!"
+                        data-img="Dialogue5.png"
+                    >
+                        <span class="link-title">PayPal</span>
+                        <span class="button-top-right">
+                            <span id="support-count" class="follower-count"></span>
+                        </span>
+                        <img src="PayPal.png" class="button-bg-icon" alt="" aria-hidden="true">
+                    </a>
+                </div>
+
+                <div class="social-link-wrapper">
+                    <a
+                        href="#"
+                        id="schedule-btn"
+                        class="social-link"
+                        aria-haspopup="dialog"
+                        aria-controls="schedule-modal"
+                        data-dialogue="My weekly streaming schedule!"
+                        data-img="Dialogue6.png"
+                    >
+                        <span class="link-title">Show Schedule</span>
+                        <span class="schedule-arrow" aria-hidden="true"></span>
+                    </a>
+                </div>
+            </nav>
+        </main>
+
+        <div
+            id="hover-card"
+            class="hover-card slide-left"
+            role="status"
+            aria-live="polite"
+            aria-hidden="true"
+        >
+            <img id="hover-img" class="hover-avatar" src="Icon.png" alt="">
+            <div id="hover-dialogue" class="hover-dialogue">Hello!</div>
+        </div>
+
+        <footer class="site-footer">
+            <small>
+                &copy; <span id="copyright-year"></span> All rights Reserved to TwoFace
+            </small>
+        </footer>
     </div>
 
-    <!-- Schedule Popup Modal -->
-    <div id="schedule-modal">
-        <div class="schedule-box">
-            <button class="schedule-close-btn" id="close-schedule">&times;</button>
-            <h2>Weekly Streaming Schedule</h2>
+    <div
+        id="intro-screen"
+        class="intro-screen"
+        role="dialog"
+        aria-label="Enter TwoFace socials"
+    >
+        <button id="enter-btn" class="enter-btn" type="button">Enter</button>
+    </div>
+
+    <div
+        id="schedule-modal"
+        class="schedule-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="schedule-title"
+        aria-hidden="true"
+    >
+        <section class="schedule-box">
+            <button
+                id="close-schedule"
+                class="schedule-close-btn"
+                type="button"
+                aria-label="Close schedule"
+            >
+                &times;
+            </button>
+
+            <h2 id="schedule-title">Weekly Streaming Schedule</h2>
+
             <div class="schedule-list-item">
-                <span class="schedule-list-day">YouTube lives on:</span> Sunday, Wednesday, Thursday.
+                <span class="schedule-list-day">YouTube lives on:</span>
+                Sunday, Wednesday, Thursday.
             </div>
+
             <div class="schedule-list-item">
-                <span class="schedule-list-day">TikTok lives on:</span> Monday.
+                <span class="schedule-list-day">TikTok lives on:</span>
+                Monday.
             </div>
-			
-			<div class="schedule-list-item">
+
+            <div class="schedule-list-item">
                 <span class="schedule-list-day">*Lives start between 8PM-9PM*</span>
             </div>
-			
-			<div class="schedule-list-item">
-                <span class="schedule-list-day">Join the Discord server to be updated!</span>
+
+            <div class="schedule-list-item">
+                <span class="schedule-list-day">
+                    Join the Discord server to be updated!
+                </span>
             </div>
-        </div>
+        </section>
     </div>
 
-    <div class="BG-video">
-        <video id="bg-vid" autoplay loop muted playsinline class="BG-video">
-            <source src="BGVideo.mp4" type="video/mp4">
-        </video>
-    </div>
-    
-    <div class="Main-Content">
-        <h1 id="main-title" class="main-title">
-            <img src="TwoFaceTitle.png" alt="TwoFace" class="title-image">
-        </h1>
+    <script>
+        "use strict";
 
-        <nav id="socials">
-            <div class="social-link-wrapper">
-                <a href="https://discord.com/invite/NU8pPas52k" target="_blank" class="social-link" 
-                   data-dialogue="The palace of the goats" 
-                   data-img="Dialogue1.png">
-                    <span class="link-title">Discord</span>
-                    <div class="button-top-right">
-                        <span id="discord-online" class="follower-count">--</span>
-                        <span id="discord-online-dot" class="status-dot dot-gray"></span>
-                        <span id="discord-total" class="follower-count">--</span>
-                        <span id="discord-total-dot" class="status-dot dot-gray"></span>
-                    </div>
-                    <img src="Discord.png" class="button-bg-icon" alt="Discord">
-                </a>
-            </div>
+        const LIVE_STATUS_WORKER_URL =
+            "https://twoface-live-checker.twofaceholder.workers.dev";
+        const DISCORD_INVITE_CODE = "NU8pPas52k";
 
-            <div class="social-link-wrapper">
-                <a href="https://www.instagram.com/yuval_alush1" target="_blank" class="social-link" 
-                   data-dialogue="I'm a handsome beautiful hunk" 
-                   data-img="Dialogue2.png">
-                    <span class="link-title">Instagram</span>
-                    <div class="button-top-right">
-                        <span id="instagram-count" class="follower-count"></span>
-                    </div>
-                    <img src="Instagram.png" class="button-bg-icon" alt="Instagram">
-                </a>
-            </div>
-            
-            <div class="social-link-wrapper">
-                <a href="https://www.tiktok.com/@twoface_yda/" target="_blank" id="tiktok-link" class="social-link" 
-                    data-dialogue="Watch my short videos and streams!" 
-                    data-img="Dialogue3.png">
-                    <span class="link-title">TikTok</span>
-                    <div class="button-top-right">
-                        <span id="tiktok-count" class="follower-count">--</span>
-                        <span class="status-dot dot-gray"></span>
-                    </div>
-                    <img src="TikTok.png" class="button-bg-icon" alt="TikTok">
-                </a>
-                <div id="tiktok-live-badge" class="live-badge tiktok-live-badge">
-                    <span class="live-dot"></span>LIVE NOW
-                </div>
-            </div>
+        const elements = {
+            body: document.body,
+            introScreen: document.getElementById("intro-screen"),
+            enterButton: document.getElementById("enter-btn"),
+            backgroundVideo: document.getElementById("bg-vid"),
+            mainTitle: document.getElementById("main-title"),
+            hoverCard: document.getElementById("hover-card"),
+            hoverImage: document.getElementById("hover-img"),
+            hoverDialogue: document.getElementById("hover-dialogue"),
+            scheduleModal: document.getElementById("schedule-modal"),
+            scheduleButton: document.getElementById("schedule-btn"),
+            closeScheduleButton: document.getElementById("close-schedule"),
+            copyrightYear: document.getElementById("copyright-year")
+        };
 
-            <div class="social-link-wrapper">
-                <a href="https://www.youtube.com/@TwoFace_YDA" target="_blank" id="youtube-link" class="social-link" 
-                   data-dialogue="Mostly stream and post videos, visit me there!" 
-                   data-img="Dialogue4.png">
-                    <span class="link-title">YouTube</span>
-                    <div class="button-top-right">
-                        <span id="youtube-count" class="follower-count">--</span>
-                        <span class="status-dot dot-gray"></span>
-                    </div>
-                    <img src="YouTube.png" class="button-bg-icon" alt="YouTube">
-                </a>
-                <div id="youtube-live-badge" class="live-badge">
-                    <span class="live-dot"></span>LIVE NOW
-                </div>
-            </div>
+        const socialLinks = Array.from(
+            document.querySelectorAll(".social-link")
+        );
 
-            <div class="social-link-wrapper">
-                <a href="http://paypal.com/paypalme/TwoFaceYDA" target="_blank" class="social-link" 
-                   data-dialogue="You can support me!" 
-                   data-img="Dialogue5.png">
-                    <span class="link-title">PayPal</span>
-                    <div class="button-top-right">
-                        <span id="support-count" class="follower-count"></span>
-                    </div>
-                    <img src="PayPal.png" class="button-bg-icon" alt="Support">
-                </a>
-            </div>
+        let hoverHideTimer = null;
+        let lastFocusedElement = null;
+        let hasEnteredSite = false;
 
-            <!-- Show Schedule Button with CSS-drawn Arrow (points left initially, rotates to point down when active) -->
-            <div class="social-link-wrapper">
-                <a href="#" id="schedule-btn" class="social-link" 
-                   data-dialogue="My weekly streaming schedule!" 
-                   data-img="Dialogue6.png">
-                    <span class="link-title">Show Schedule</span>
-                    <div class="schedule-arrow"></div>
-                </a>
-            </div>
-        </nav>
-    </div>
+        function isTouchLayout() {
+            return window.matchMedia("(max-width: 600px)").matches;
+        }
 
-    <div id="hover-card" class="hover-card slide-left">
-        <img id="hover-img" class="hover-avatar" src="Icon.png" alt="Preview">
-        <div id="hover-dialogue" class="hover-dialogue">Hello!</div>
-    </div>
-    
-    <footer>
-        <p><small>&copy; <span id="copyright-year"></span> All rights Reserved to TwoFace</small></p>
-    </footer>
-    
-<script>
-    function setupContextMenuBlock() {
-        document.addEventListener('contextmenu', function(event) {
-            event.preventDefault();
-        });
-    }
-
-    function setupIntroScreen() {
-        const enterBtn = document.getElementById('enter-btn');
-        const introScreen = document.getElementById('intro-screen');
-        const bgVid = document.getElementById('bg-vid');
-        const mainTitle = document.getElementById('main-title');
-
-        enterBtn.addEventListener('click', () => {
-            enterBtn.classList.add('spinning');
-            
-            introScreen.classList.add('hidden');
-            
-            bgVid.muted = true; 
-            bgVid.play();
-
-            setTimeout(() => {
-                mainTitle.classList.add('active');
-            }, 200);
-        });
-    }
-
-    function setupHoverCards() {
-        const hoverCard = document.getElementById('hover-card');
-        const hoverImg = document.getElementById('hover-img');
-        const hoverDialogue = document.getElementById('hover-dialogue');
-        const socialLinks = document.querySelectorAll('.social-link');
-
-        socialLinks.forEach((link, index) => {
-            link.addEventListener('mouseenter', (e) => {
-                const rect = e.target.getBoundingClientRect();
-                
-                const dialogueText = e.target.getAttribute('data-dialogue');
-                const imgSrc = e.target.getAttribute('data-img');
-
-                if (dialogueText) hoverDialogue.textContent = dialogueText;
-                if (imgSrc) hoverImg.src = imgSrc;
-
-                const side = index % 2 === 0 ? 'left' : 'right';
-
-                hoverCard.classList.remove('slide-left', 'slide-right');
-                hoverCard.classList.add(`slide-${side}`);
-
-                const linkCenterY = rect.top + (rect.height / 2) - (hoverCard.offsetHeight / 2);
-                hoverCard.style.top = `${linkCenterY}px`;
-                
-                requestAnimationFrame(() => {
-                    hoverCard.classList.add('active');
-                });
+        function setupContextMenuBlock() {
+            document.addEventListener("contextmenu", (event) => {
+                event.preventDefault();
             });
+        }
 
-            link.addEventListener('mouseleave', () => {
-                hoverCard.classList.remove('active');
-            });
+        function setupIntroScreen() {
+            elements.enterButton.addEventListener("click", async () => {
+                elements.enterButton.classList.add("spinning");
+                elements.introScreen.classList.add("hidden");
+                hasEnteredSite = true;
 
-            link.addEventListener('click', (e) => {
-                const url = link.href;
-                if (link.id === 'schedule-btn') {
-                    e.preventDefault();
-                    link.classList.add('social-link-clicked');
-                    setTimeout(() => {
-                        link.classList.remove('social-link-clicked');
-                        link.classList.add('schedule-active');
-                        document.getElementById('schedule-modal').classList.add('active');
-                    }, 300);
-                    return;
+                elements.backgroundVideo.muted = true;
+
+                try {
+                    await elements.backgroundVideo.play();
+                } catch (error) {
+                    console.warn("Background video could not start:", error);
                 }
 
-                e.preventDefault();
-                link.classList.add('social-link-clicked');
-                setTimeout(() => {
-                    link.classList.remove('social-link-clicked');
-                    window.open(url, '_blank');
-                }, 100);
+                window.setTimeout(() => {
+                    elements.mainTitle.classList.add("active");
+                }, 200);
             });
-        });
-
-        // Close modal handlers
-        const modal = document.getElementById('schedule-modal');
-        const closeBtn = document.getElementById('close-schedule');
-        const scheduleBtn = document.getElementById('schedule-btn');
-
-        function closeModal() {
-            modal.classList.remove('active');
-            scheduleBtn.classList.remove('schedule-active');
         }
 
-        closeBtn.addEventListener('click', closeModal);
+        function hideHoverCard() {
+            window.clearTimeout(hoverHideTimer);
+            elements.hoverCard.classList.remove("active");
+            elements.hoverCard.setAttribute("aria-hidden", "true");
+        }
 
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
+        function showHoverCard(link, index) {
+            const dialogue = link.dataset.dialogue;
+            const image = link.dataset.img;
+
+            if (dialogue) {
+                elements.hoverDialogue.textContent = dialogue;
             }
-        });
-    }
 
-    const LIVE_STATUS_WORKER_URL = 'https://twoface-live-checker.twofaceholder.workers.dev';
+            if (image) {
+                elements.hoverImage.src = image;
+            }
 
-    async function pollLiveStatus() {
-        try {
-            const res = await fetch(LIVE_STATUS_WORKER_URL);
-            const data = await res.json();
+            elements.hoverCard.classList.remove("slide-left", "slide-right");
+            elements.hoverCard.classList.add(
+                index % 2 === 0 ? "slide-left" : "slide-right"
+            );
 
-            const ytCount = document.getElementById('youtube-count');
-            if (ytCount) ytCount.textContent = data.subs ?? '--';
-
-            const badge = document.getElementById('youtube-live-badge');
-            if (badge) badge.classList.toggle('is-live', !!data.isLive);
-
-            const tiktokCount = document.getElementById('tiktok-count');
-            const tiktokHandle = document.getElementById('tiktok-handle');
-            if (tiktokCount) tiktokCount.textContent = data.tiktok ?? '--';
-            if (tiktokHandle) tiktokHandle.textContent = data.tiktokHandle ?? '@--';
-
-            const tiktokBadge = document.getElementById('tiktok-live-badge');
-            if (tiktokBadge) tiktokBadge.classList.toggle('is-live', !!data.tiktokLive);
-
-        } catch (err) {
-            console.error('Error polling social metrics:', err);
-        }
-    }
-
-    function setupYouTubePolling() {
-        pollLiveStatus();
-        setInterval(pollLiveStatus, 30000);
-    }
-    
-    const DISCORD_INVITE_CODE = 'NU8pPas52k';
-
-    async function fetchDiscordData() {
-        const onlineEl = document.getElementById('discord-online');
-        const totalEl = document.getElementById('discord-total');
-        const onlineDot = document.getElementById('discord-online-dot');
-        const totalDot = document.getElementById('discord-total-dot');
-
-        try {
-            const response = await fetch(`https://discord.com/api/v10/invites/${DISCORD_INVITE_CODE}?with_counts=true`);
-            const data = await response.json();
-
-            if (data && data.approximate_presence_count !== undefined) {
-                onlineEl.textContent = data.approximate_presence_count;
-                totalEl.textContent = data.approximate_member_count;
-
-                onlineDot.classList.remove('dot-gray');
-                onlineDot.classList.add('dot-green');
-
-                totalDot.classList.remove('dot-green');
-                totalDot.classList.add('dot-gray');
+            if (isTouchLayout()) {
+                elements.hoverCard.style.top = "";
             } else {
-                onlineEl.textContent = '--';
-                totalEl.textContent = '--';
-                onlineDot.classList.remove('dot-green');
-                onlineDot.classList.add('dot-gray');
-                totalDot.classList.remove('dot-green');
-                totalDot.classList.add('dot-gray');
+                const rect = link.getBoundingClientRect();
+                const cardHeight = elements.hoverCard.offsetHeight;
+                const top = rect.top + (rect.height - cardHeight) / 2;
+                elements.hoverCard.style.top = `${Math.max(12, top)}px`;
             }
-        } catch (err) {
-            console.error('Error fetching Discord data:', err);
-            onlineEl.textContent = '--';
-            totalEl.textContent = '--';
-            onlineDot.classList.remove('dot-green');
-            onlineDot.classList.add('dot-gray');
-            totalDot.classList.remove('dot-green');
-            totalDot.classList.add('dot-gray');
+
+            elements.hoverCard.setAttribute("aria-hidden", "false");
+
+            window.requestAnimationFrame(() => {
+                elements.hoverCard.classList.add("active");
+            });
+
+            if (isTouchLayout()) {
+                window.clearTimeout(hoverHideTimer);
+                hoverHideTimer = window.setTimeout(hideHoverCard, 3500);
+            }
         }
-    }
 
-    function updateCopyrightYear() {
-        const yearEl = document.getElementById('copyright-year');
-        if (yearEl) {
-            yearEl.textContent = new Date().getFullYear();
+        function setupHoverCards() {
+            socialLinks.forEach((link, index) => {
+                link.addEventListener("mouseenter", () => {
+                    showHoverCard(link, index);
+                });
+
+                link.addEventListener("focus", () => {
+                    showHoverCard(link, index);
+                });
+
+                link.addEventListener("mouseleave", () => {
+                    if (!isTouchLayout()) {
+                        hideHoverCard();
+                    }
+                });
+
+                link.addEventListener("blur", () => {
+                    if (!isTouchLayout()) {
+                        hideHoverCard();
+                    }
+                });
+
+                link.addEventListener(
+                    "touchstart",
+                    () => {
+                        showHoverCard(link, index);
+                    },
+                    { passive: true }
+                );
+
+                link.addEventListener("click", (event) => {
+                    if (link === elements.scheduleButton) {
+                        event.preventDefault();
+                        openSchedule();
+                        return;
+                    }
+
+                    /*
+                     * On a phone, the first tap shows the dialogue.
+                     * A second tap opens the social link.
+                     */
+                    if (isTouchLayout() && !link.dataset.dialogueShown) {
+                        event.preventDefault();
+                        link.dataset.dialogueShown = "true";
+                        showHoverCard(link, index);
+
+                        window.setTimeout(() => {
+                            delete link.dataset.dialogueShown;
+                        }, 3500);
+
+                        return;
+                    }
+
+                    event.preventDefault();
+                    link.classList.add("social-link-clicked");
+
+                    window.setTimeout(() => {
+                        link.classList.remove("social-link-clicked");
+                        window.open(link.href, "_blank", "noopener,noreferrer");
+                        delete link.dataset.dialogueShown;
+                    }, 100);
+                });
+            });
         }
-    }
 
-    async function initializeApp() {    
-        setupContextMenuBlock();
-        setupIntroScreen();
-        setupHoverCards();
-        setupYouTubePolling();
-        fetchDiscordData();
-        updateCopyrightYear();      
-    }
+        function openSchedule() {
+            lastFocusedElement = document.activeElement;
+            elements.scheduleButton.classList.add("schedule-active");
+            elements.scheduleModal.classList.add("active");
+            elements.scheduleModal.setAttribute("aria-hidden", "false");
+            elements.closeScheduleButton.focus();
+        }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeApp);
-    } else {
-        initializeApp();
-    }
-</script>
+        function closeSchedule() {
+            elements.scheduleButton.classList.remove("schedule-active");
+            elements.scheduleModal.classList.remove("active");
+            elements.scheduleModal.setAttribute("aria-hidden", "true");
+
+            if (lastFocusedElement) {
+                lastFocusedElement.focus();
+            }
+        }
+
+        function setupScheduleModal() {
+            elements.closeScheduleButton.addEventListener("click", closeSchedule);
+
+            elements.scheduleModal.addEventListener("click", (event) => {
+                if (event.target === elements.scheduleModal) {
+                    closeSchedule();
+                }
+            });
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    hideHoverCard();
+
+                    if (elements.scheduleModal.classList.contains("active")) {
+                        closeSchedule();
+                    }
+                }
+            });
+        }
+
+        async function pollLiveStatus() {
+            try {
+                const response = await fetch(LIVE_STATUS_WORKER_URL, {
+                    headers: { Accept: "application/json" },
+                    cache: "no-store"
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Live status request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                const youtubeCount = document.getElementById("youtube-count");
+                const tiktokCount = document.getElementById("tiktok-count");
+                const youtubeBadge = document.getElementById("youtube-live-badge");
+                const tiktokBadge = document.getElementById("tiktok-live-badge");
+
+                if (youtubeCount) {
+                    youtubeCount.textContent = data.subs ?? "--";
+                }
+
+                if (tiktokCount) {
+                    tiktokCount.textContent = data.tiktok ?? "--";
+                }
+
+                if (youtubeBadge) {
+                    youtubeBadge.classList.toggle("is-live", Boolean(data.isLive));
+                }
+
+                if (tiktokBadge) {
+                    tiktokBadge.classList.toggle(
+                        "is-live",
+                        Boolean(data.tiktokLive)
+                    );
+                }
+            } catch (error) {
+                console.error("Error polling social metrics:", error);
+            }
+        }
+
+        function setupLiveStatusPolling() {
+            pollLiveStatus();
+            window.setInterval(pollLiveStatus, 30000);
+        }
+
+        async function fetchDiscordData() {
+            const onlineCount = document.getElementById("discord-online");
+            const totalCount = document.getElementById("discord-total");
+            const onlineDot = document.getElementById("discord-online-dot");
+            const totalDot = document.getElementById("discord-total-dot");
+
+            try {
+                const response = await fetch(
+                    `https://discord.com/api/v10/invites/${DISCORD_INVITE_CODE}?with_counts=true`,
+                    {
+                        headers: { Accept: "application/json" },
+                        cache: "no-store"
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`Discord request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const hasCounts =
+                    data &&
+                    data.approximate_presence_count !== undefined &&
+                    data.approximate_member_count !== undefined;
+
+                if (!hasCounts) {
+                    throw new Error("Discord did not return member counts");
+                }
+
+                onlineCount.textContent = data.approximate_presence_count;
+                totalCount.textContent = data.approximate_member_count;
+
+                onlineDot.classList.remove("dot-gray");
+                onlineDot.classList.add("dot-green");
+                totalDot.classList.remove("dot-green");
+                totalDot.classList.add("dot-gray");
+            } catch (error) {
+                console.error("Error fetching Discord data:", error);
+                onlineCount.textContent = "--";
+                totalCount.textContent = "--";
+                onlineDot.classList.remove("dot-green");
+                onlineDot.classList.add("dot-gray");
+                totalDot.classList.remove("dot-green");
+                totalDot.classList.add("dot-gray");
+            }
+        }
+
+        function setupCopyrightYear() {
+            elements.copyrightYear.textContent = new Date().getFullYear();
+        }
+
+        function setupResizeHandling() {
+            window.addEventListener("resize", () => {
+                if (isTouchLayout()) {
+                    elements.hoverCard.style.top = "";
+                } else if (elements.hoverCard.classList.contains("active")) {
+                    const activeLink = document.activeElement;
+                    const index = socialLinks.indexOf(activeLink);
+
+                    if (index !== -1) {
+                        showHoverCard(activeLink, index);
+                    }
+                }
+            });
+        }
+
+        function initializeApp() {
+            setupContextMenuBlock();
+            setupIntroScreen();
+            setupHoverCards();
+            setupScheduleModal();
+            setupLiveStatusPolling();
+            fetchDiscordData();
+            setupCopyrightYear();
+            setupResizeHandling();
+
+            if (hasEnteredSite) {
+                elements.backgroundVideo.play().catch(() => {});
+            }
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initializeApp, {
+                once: true
+            });
+        } else {
+            initializeApp();
+        }
+    </script>
 </body>
 </html>
