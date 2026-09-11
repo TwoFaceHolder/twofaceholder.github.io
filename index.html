@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>TwoFace socials lol hi</title>
+    <title>TwoFace socials</title>
     <link rel="icon" type="image/png" href="Icon.png">
 
     <style>
@@ -246,8 +246,8 @@
         .status-dot {
             display: inline-block;
             flex: 0 0 auto;
-            width: 10px;
-            height: 10px;
+            width: 9px;
+            height: 9px;
             border: 2px solid;
             border-radius: 50%;
         }
@@ -264,7 +264,7 @@
 
         .follower-count {
             color: #000;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             line-height: 1;
             opacity: 0.75;
@@ -336,6 +336,27 @@
             display: flex;
         }
 
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #e00000;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+        }
+
         .hover-card {
             position: fixed;
             z-index: 20;
@@ -347,8 +368,8 @@
             pointer-events: none;
             opacity: 0;
             transition:
-            transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27),
-            opacity 0.3s ease;
+                transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.27),
+                opacity 0.3s ease;
         }
 
         .hover-card.slide-left {
@@ -488,6 +509,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
             background: #000;
             opacity: 1;
             visibility: visible;
@@ -502,26 +524,26 @@
             pointer-events: none;
         }
 
-		.enter-btn {
-			width: 100vw;
-			max-width: none;
-			padding: 20px 0;
-			border: 2px solid #fff;
-			border-radius: 1px;
-			background: transparent;
-			color: #fff;
-			font-family: "Flavors", sans-serif;
-			font-size: clamp(3rem, 12vw, 5rem);
-			line-height: 1;
-			transition:
-				transform 0.2s ease,
-				background-color 0.2s ease;
-		}
+        .enter-btn {
+            width: 100%;
+            max-width: none;
+            padding: 20px 0;
+            border: 2px solid #fff;
+            border-radius: 1px;
+            background: transparent;
+            color: #fff;
+            font-family: "Flavors", sans-serif;
+            font-size: clamp(3rem, 12vw, 5rem);
+            line-height: 1;
+            transition:
+                transform 0.2s ease,
+                background-color 0.2s ease;
+        }
 
         .enter-btn:hover,
         .enter-btn:focus-visible {
-        background: rgba(255, 255, 255, 0.08);
-        outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            outline: none;
         }
 
         .enter-btn.spinning {
@@ -684,7 +706,7 @@
 
                 <div class="social-link-wrapper">
                     <a
-                        href="https://www.youtube.com/@TwoFace_YDA/live"
+                        href="https://www.youtube.com/@TwoFace_YDA"
                         target="_blank"
                         rel="noopener noreferrer"
                         id="youtube-link"
@@ -814,6 +836,16 @@
         const LIVE_STATUS_WORKER_URL =
             "https://twoface-live-checker.twofaceholder.workers.dev";
         const DISCORD_INVITE_CODE = "NU8pPas52k";
+        const SOCIAL_URLS = {
+            youtube: {
+                home: "https://www.youtube.com/@TwoFace_YDA",
+                live: "https://www.youtube.com/@TwoFace_YDA/live"
+            },
+            tiktok: {
+                home: "https://www.tiktok.com/@twoface_yda/",
+                live: "https://www.tiktok.com/@twoface_yda/live"
+            }
+        };
 
         const elements = {
             body: document.body,
@@ -1011,6 +1043,39 @@
             });
         }
 
+        function isLiveValue(value) {
+            return value === true || value === 1 || value === "true";
+        }
+
+        function updateLiveLinks(data) {
+            const youtubeLink = document.getElementById("youtube-link");
+            const tiktokLink = document.getElementById("tiktok-link");
+            const youtubeIsLive = isLiveValue(data.isLive);
+            const tiktokIsLive = isLiveValue(data.tiktokLive);
+
+            if (youtubeLink) {
+                youtubeLink.href = youtubeIsLive
+                    ? data.youtubeLiveUrl || SOCIAL_URLS.youtube.live
+                    : SOCIAL_URLS.youtube.home;
+                youtubeLink.setAttribute("aria-label",
+                    youtubeIsLive
+                        ? "Watch the current YouTube live"
+                        : "Visit the TwoFace YouTube homepage"
+                );
+            }
+
+            if (tiktokLink) {
+                tiktokLink.href = tiktokIsLive
+                    ? data.tiktokLiveUrl || SOCIAL_URLS.tiktok.live
+                    : SOCIAL_URLS.tiktok.home;
+                tiktokLink.setAttribute("aria-label",
+                    tiktokIsLive
+                        ? "Watch the current TikTok live"
+                        : "Visit the TwoFace TikTok homepage"
+                );
+            }
+        }
+
         async function pollLiveStatus() {
             try {
                 const response = await fetch(LIVE_STATUS_WORKER_URL, {
@@ -1037,18 +1102,24 @@
                     tiktokCount.textContent = data.tiktok ?? "--";
                 }
 
+                updateLiveLinks(data);
+
                 if (youtubeBadge) {
-                    youtubeBadge.classList.toggle("is-live", Boolean(data.isLive));
+                    youtubeBadge.classList.toggle(
+                        "is-live",
+                        isLiveValue(data.isLive)
+                    );
                 }
 
                 if (tiktokBadge) {
                     tiktokBadge.classList.toggle(
                         "is-live",
-                        Boolean(data.tiktokLive)
+                        isLiveValue(data.tiktokLive)
                     );
                 }
             } catch (error) {
                 console.error("Error polling social metrics:", error);
+                updateLiveLinks({ isLive: false, tiktokLive: false });
             }
         }
 
