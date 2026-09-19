@@ -240,7 +240,10 @@
             right: 8px;
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
+            max-width: calc(100% - 16px);
+            min-height: 16px;
+            white-space: nowrap;
         }
 
         .status-dot {
@@ -250,6 +253,10 @@
             height: 9px;
             border: 2px solid;
             border-radius: 50%;
+        }
+
+        .status-dot.is-hidden {
+            display: none;
         }
 
         .dot-gray {
@@ -278,6 +285,10 @@
 		
 		.follower-count.shrink-text {
             font-size: 1.1rem; 
+        }
+
+        .live-viewer-count:empty {
+            display: none;
         }
 
         .button-bg-icon {
@@ -703,9 +714,10 @@
 					>
 						<span class="link-title">TikTok</span>
 						<span class="button-top-right">
-							<span id="tiktok-viewers" class="follower-count"></span>
+							<span id="tiktok-viewers" class="follower-count live-viewer-count"></span>
+							<span id="tiktok-status-dot" class="status-dot dot-gray is-hidden"></span>
 							<span id="tiktok-count" class="follower-count">--</span>
-							<span id="tiktok-status-dot" class="status-dot dot-gray"></span>
+							<span class="status-dot dot-gray" aria-hidden="true"></span>
 						</span>
 						<img src="TikTok.png" class="button-bg-icon" alt="" aria-hidden="true">
 					</a>
@@ -726,9 +738,10 @@
 					>
 						<span class="link-title">YouTube</span>
 						<span class="button-top-right">
-							<span id="youtube-viewers" class="follower-count"></span>
+							<span id="youtube-viewers" class="follower-count live-viewer-count"></span>
+							<span id="youtube-status-dot" class="status-dot dot-gray is-hidden"></span>
 							<span id="youtube-count" class="follower-count">--</span>
-							<span id="youtube-status-dot" class="status-dot dot-gray"></span>
+							<span class="status-dot dot-gray" aria-hidden="true"></span>
 						</span>
 						<img src="YouTube.png" class="button-bg-icon" alt="" aria-hidden="true">
 					</a>
@@ -845,6 +858,7 @@
 
         const LIVE_STATUS_WORKER_URL =
             "https://twoface-live-checker.twofaceholder.workers.dev";
+        const FORCE_TEST_LIVE = false;
         const DISCORD_INVITE_CODE = "NU8pPas52k";
         const SOCIAL_URLS = {
             youtube: {
@@ -1088,16 +1102,31 @@
 
 	async function pollLiveStatus() {
             try {
-                const response = await fetch(LIVE_STATUS_WORKER_URL, {
-                    headers: { Accept: "application/json" },
-                    cache: "no-store"
-                });
+                let data;
 
-                if (!response.ok) {
-                    throw new Error(`Live status request failed: ${response.status}`);
+                if (FORCE_TEST_LIVE) {
+                    data = {
+                        isLive: true,
+                        subs: 12345,
+                        tiktok: 6789,
+                        youtubeViewers: "142",
+                        tiktokLive: true,
+                        tiktokViewers: "89"
+                    };
+                } else {
+                    const response = await fetch(LIVE_STATUS_WORKER_URL, {
+                        headers: { Accept: "application/json" },
+                        cache: "no-store"
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `Live status request failed: ${response.status}`
+                        );
+                    }
+
+                    data = await response.json();
                 }
-
-                const data = await response.json();
 
                 const youtubeCount = document.getElementById("youtube-count");
                 const tiktokCount = document.getElementById("tiktok-count");
@@ -1142,11 +1171,11 @@
                 if (youtubeDot) {
                     youtubeDot.classList.toggle("dot-red", ytLive);
                     youtubeDot.classList.toggle("dot-gray", !ytLive);
+                    youtubeDot.classList.toggle("is-hidden", !ytLive);
                 }
                 if (youtubeViewers) {
                     if (ytLive && data.youtubeViewers) {
                         formatAndResize(youtubeViewers, data.youtubeViewers);
-                        youtubeViewers.textContent += " "; // Space separator before the dot
                     } else {
                         youtubeViewers.textContent = "";
                         youtubeViewers.classList.remove("shrink-text");
@@ -1157,11 +1186,11 @@
                 if (tiktokDot) {
                     tiktokDot.classList.toggle("dot-red", tkLive);
                     tiktokDot.classList.toggle("dot-gray", !tkLive);
+                    tiktokDot.classList.toggle("is-hidden", !tkLive);
                 }
                 if (tiktokViewers) {
                     if (tkLive && data.tiktokViewers) {
                         formatAndResize(tiktokViewers, data.tiktokViewers);
-                        tiktokViewers.textContent += " "; // Space separator before the dot
                     } else {
                         tiktokViewers.textContent = "";
                         tiktokViewers.classList.remove("shrink-text");
@@ -1199,17 +1228,6 @@
                 }
 
                 const data = await response.json();
-				
-				// --- FOR TESTING PURPOSES ONLY ---
-                // Change this to false when you are actually done testing!
-                const FORCE_TEST_LIVE = false; 
-                if (FORCE_TEST_LIVE) {
-                    data.isLive = false;
-                    data.youtubeViewers = "142"; 
-                    data.tiktokLive = true;
-                    data.tiktokViewers = "89";
-                }
-                // ----
                 const hasCounts =
                     data &&
                     data.approximate_presence_count !== undefined &&
