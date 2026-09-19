@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
     <title>TwoFace socials lol hi</title>
-    <link rel="icon" type="image/png" href="Icon.png">
+    <link id="site-favicon" rel="icon" type="image/png" href="Icon.png">
 
     <style>
         @font-face {
@@ -859,6 +859,8 @@
         const LIVE_STATUS_WORKER_URL =
             "https://twoface-live-checker.twofaceholder.workers.dev";
         const FORCE_TEST_LIVE = false;
+        const NORMAL_FAVICON_URL = "Icon.png";
+        const LIVE_FAVICON_URL = "LiveIcon.png";
         const DISCORD_INVITE_CODE = "NU8pPas52k";
         const SOCIAL_URLS = {
             youtube: {
@@ -1100,6 +1102,31 @@
             }
         }
 
+        function updateFavicon(isLive) {
+            const favicon = document.getElementById("site-favicon");
+
+            if (!favicon) {
+                return;
+            }
+
+            const faviconUrl = isLive
+                ? LIVE_FAVICON_URL
+                : NORMAL_FAVICON_URL;
+
+            if (isLive) {
+                favicon.onerror = () => {
+                    favicon.onerror = null;
+                    favicon.href = NORMAL_FAVICON_URL;
+                };
+            } else {
+                favicon.onerror = null;
+            }
+
+            if (favicon.getAttribute("href") !== faviconUrl) {
+                favicon.setAttribute("href", faviconUrl);
+            }
+        }
+
 	async function pollLiveStatus() {
             try {
                 let data;
@@ -1142,6 +1169,7 @@
 
                 const ytLive = isLiveValue(data.isLive);
                 const tkLive = isLiveValue(data.tiktokLive);
+                updateFavicon(ytLive || tkLive);
 
                 function formatAndResize(element, rawValue, defaultText = "") {
                     if (!element) return;
