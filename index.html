@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#000000">
-    <title>TwoFace socials lol hi</title>
+    <title>TwoFace socials</title>
     <link rel="icon" type="image/png" href="Icon.png">
 
     <style>
@@ -240,7 +240,7 @@
             right: 8px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
 
         .status-dot {
@@ -261,6 +261,11 @@
             border-color: #158120;
             background: #00cc00;
         }
+		
+		.dot-red {
+            border-color: #8b0000;
+            background: #e00000;
+        }
 
         .follower-count {
             color: #000;
@@ -268,6 +273,11 @@
             font-weight: bold;
             line-height: 1;
             opacity: 0.75;
+			transition: font-size 0.2s ease;
+        }
+		
+		.follower-count.shrink-text {
+            font-size: 1.1rem; 
         }
 
         .button-bg-icon {
@@ -315,7 +325,7 @@
         .live-badge {
             position: absolute;
             z-index: 3;
-            top: -8px;
+            top: -10px;
             left: -12px;
             display: none;
             align-items: center;
@@ -334,6 +344,27 @@
 
         .live-badge.is-live {
             display: flex;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #e00000;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
         }
 
         .hover-card {
@@ -660,52 +691,52 @@
                     </a>
                 </div>
 
-                <div class="social-link-wrapper">
-                    <a
-                        href="https://www.tiktok.com/@twoface_yda"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        id="tiktok-link"
-                        class="social-link"
-                        data-dialogue="Watch my short videos and streams!"
-                        data-img="Dialogue3.png"
-                    >
-                        <span class="link-title">TikTok</span>
-                        <span class="button-top-right">
-                            <span id="tiktok-count" class="follower-count">--</span>
-                            <span class="status-dot dot-gray"></span>
-                        </span>
-                        <img src="TikTok.png" class="button-bg-icon" alt="" aria-hidden="true">
-                    </a>
-                    <div id="tiktok-live-badge" class="live-badge">
-                        <span class="live-dot"></span>
-                        LIVE NOW
-                    </div>
-                </div>
+				<div class="social-link-wrapper">
+					<a
+						href="https://www.tiktok.com/@twoface_yda"
+						target="_blank"
+						rel="noopener noreferrer"
+						id="tiktok-link"
+						class="social-link"
+						data-dialogue="Watch my short videos and streams!"
+						data-img="Dialogue3.png"
+					>
+						<span class="link-title">TikTok</span>
+						<span class="button-top-right">
+							<span id="tiktok-viewers" class="follower-count"></span>
+							<span id="tiktok-count" class="follower-count">--</span>
+							<span id="tiktok-status-dot" class="status-dot dot-gray"></span>
+						</span>
+						<img src="TikTok.png" class="button-bg-icon" alt="" aria-hidden="true">
+					</a>
+					<div id="tiktok-live-badge" class="live-badge">
+						LIVE NOW
+					</div>
+				</div>
 
-                <div class="social-link-wrapper">
-                    <a
-                        href="https://www.youtube.com/@TwoFace_YDA"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        id="youtube-link"
-                        class="social-link"
-                        data-dialogue="Mostly stream and post videos, visit me there!"
-                        data-img="Dialogue4.png"
-                    >
-                        <span class="link-title">YouTube</span>
-                        <span class="button-top-right">
-                            <span id="youtube-count" class="follower-count">--</span>
-                            <span class="status-dot dot-gray"></span>
-                        </span>
-                        <img src="YouTube.png" class="button-bg-icon" alt="" aria-hidden="true">
-                    </a>
-                    <div id="youtube-live-badge" class="live-badge">
-                        <span class="live-dot"></span>
-                        LIVE NOW
-                    </div>
-                </div>
-
+				<div class="social-link-wrapper">
+					<a
+						href="https://www.youtube.com/@TwoFace_YDA"
+						target="_blank"
+						rel="noopener noreferrer"
+						id="youtube-link"
+						class="social-link"
+						data-dialogue="Mostly stream and post videos, visit me there!"
+						data-img="Dialogue4.png"
+					>
+						<span class="link-title">YouTube</span>
+						<span class="button-top-right">
+							<span id="youtube-viewers" class="follower-count"></span>
+							<span id="youtube-count" class="follower-count">--</span>
+							<span id="youtube-status-dot" class="status-dot dot-gray"></span>
+						</span>
+						<img src="YouTube.png" class="button-bg-icon" alt="" aria-hidden="true">
+					</a>
+					<div id="youtube-live-badge" class="live-badge">
+						LIVE NOW
+					</div>
+				</div>
+				
                 <div class="social-link-wrapper">
                     <a
                         href="https://paypal.com/paypalme/TwoFaceYDA"
@@ -1055,7 +1086,7 @@
             }
         }
 
-        async function pollLiveStatus() {
+	async function pollLiveStatus() {
             try {
                 const response = await fetch(LIVE_STATUS_WORKER_URL, {
                     headers: { Accept: "application/json" },
@@ -1072,30 +1103,71 @@
                 const tiktokCount = document.getElementById("tiktok-count");
                 const youtubeBadge = document.getElementById("youtube-live-badge");
                 const tiktokBadge = document.getElementById("tiktok-live-badge");
-
-                if (youtubeCount) {
-                    youtubeCount.textContent = data.subs ?? "--";
-                }
-
-                if (tiktokCount) {
-                    tiktokCount.textContent = data.tiktok ?? "--";
-                }
+                
+                const youtubeViewers = document.getElementById("youtube-viewers");
+                const tiktokViewers = document.getElementById("tiktok-viewers");
+                const youtubeDot = document.getElementById("youtube-status-dot");
+                const tiktokDot = document.getElementById("tiktok-status-dot");
 
                 updateLiveLinks(data);
 
-                if (youtubeBadge) {
-                    youtubeBadge.classList.toggle(
-                        "is-live",
-                        isLiveValue(data.isLive)
-                    );
+                const ytLive = isLiveValue(data.isLive);
+                const tkLive = isLiveValue(data.tiktokLive);
+
+                function formatAndResize(element, rawValue, defaultText = "") {
+                    if (!element) return;
+                    if (!rawValue || rawValue === "--") {
+                        element.textContent = defaultText;
+                        element.classList.remove("shrink-text");
+                        return;
+                    }
+
+                    const num = Number(rawValue);
+                    let formatted = rawValue.toString();
+
+                    if (num >= 10000) {
+                        formatted = num.toLocaleString();
+                        element.classList.add("shrink-text");
+                    } else {
+                        element.classList.remove("shrink-text");
+                    }
+
+                    element.textContent = formatted;
                 }
 
-                if (tiktokBadge) {
-                    tiktokBadge.classList.toggle(
-                        "is-live",
-                        isLiveValue(data.tiktokLive)
-                    );
+                formatAndResize(youtubeCount, data.subs, "--");
+                formatAndResize(tiktokCount, data.tiktok, "--");
+
+                if (youtubeBadge) youtubeBadge.classList.toggle("is-live", ytLive);
+                if (youtubeDot) {
+                    youtubeDot.classList.toggle("dot-red", ytLive);
+                    youtubeDot.classList.toggle("dot-gray", !ytLive);
                 }
+                if (youtubeViewers) {
+                    if (ytLive && data.youtubeViewers) {
+                        formatAndResize(youtubeViewers, data.youtubeViewers);
+                        youtubeViewers.textContent += " "; // Space separator before the dot
+                    } else {
+                        youtubeViewers.textContent = "";
+                        youtubeViewers.classList.remove("shrink-text");
+                    }
+                }
+
+                if (tiktokBadge) tiktokBadge.classList.toggle("is-live", tkLive);
+                if (tiktokDot) {
+                    tiktokDot.classList.toggle("dot-red", tkLive);
+                    tiktokDot.classList.toggle("dot-gray", !tkLive);
+                }
+                if (tiktokViewers) {
+                    if (tkLive && data.tiktokViewers) {
+                        formatAndResize(tiktokViewers, data.tiktokViewers);
+                        tiktokViewers.textContent += " "; // Space separator before the dot
+                    } else {
+                        tiktokViewers.textContent = "";
+                        tiktokViewers.classList.remove("shrink-text");
+                    }
+                }
+
             } catch (error) {
                 console.error("Error polling social metrics:", error);
                 updateLiveLinks({ isLive: false, tiktokLive: false });
@@ -1127,6 +1199,17 @@
                 }
 
                 const data = await response.json();
+				
+				// --- FOR TESTING PURPOSES ONLY ---
+                // Change this to false when you are actually done testing!
+                const FORCE_TEST_LIVE = false; 
+                if (FORCE_TEST_LIVE) {
+                    data.isLive = false;
+                    data.youtubeViewers = "142"; 
+                    data.tiktokLive = true;
+                    data.tiktokViewers = "89";
+                }
+                // ----
                 const hasCounts =
                     data &&
                     data.approximate_presence_count !== undefined &&
