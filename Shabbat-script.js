@@ -9,7 +9,7 @@
     const candleLighting = new Date(data.items.find(i => i.category === 'candles').date);
     const havdalah = new Date(data.items.find(i => i.category === 'havdalah').date);
     //const now = new Date();
-    const now = new Date('2026-11-13T18:00:00');
+    const now = new Date(2026, 10, 7, 14, 30, 0);
 
     if (now >= candleLighting && now <= havdalah) {
       // It's Shabbat — redirect to the Shabbat page
