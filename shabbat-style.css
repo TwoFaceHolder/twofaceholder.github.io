@@ -1,0 +1,65 @@
+html, body {
+	margin: 0;
+	height: 100vh;
+	background-color: #eadbbd;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}	
+
+main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+@font-face {
+	font-family: 'Flavors';
+	src: url('Flavors.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+	font-display: swap;
+}
+
+.shabbat-title {
+	font-size: 10rem;	
+	font-family: 'Flavors', sans-serif;
+	margin: 0;
+	
+	background-image: url('ShabbatTitlePattern.png');
+	background-size: 200px 200px;
+	background-clip: text;
+	-webkit-background-clip: text;
+	
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+	
+	animation: scrollbg 10s linear infinite; 
+	filter: drop-shadow(8px 8px 3px rgba(0, 0, 0, 0.2));
+}
+
+@keyframes scrollbg {
+	0% {
+		background-position: 0px 0px;
+	}
+	
+	100% {
+		background-position: 200px 200px;
+	}
+}
+
+.paragraph {
+	font-size: 1.5rem;
+	color: #419389;
+	width: 500px;
+	height: auto;
+}
+
+.shabbat-image {
+	justify-content: center;
+	align-items: center;
+	max-width: 700px;
+	height: auto;
+	margin: 40px;
+}
