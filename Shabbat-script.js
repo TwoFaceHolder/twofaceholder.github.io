@@ -1,7 +1,5 @@
-<script>
 (async function checkShabbat() {  
   const geonameId = '295530'; // Be'er Sheva
-
   try {
     const response = await fetch(`https://www.hebcal.com/shabbat?cfg=json&geonameid=${geonameId}&M=on`);
     const data = await response.json();
@@ -26,4 +24,3 @@
     console.error('Error checking Shabbat status:', err);
   }
 })();
-</script>
