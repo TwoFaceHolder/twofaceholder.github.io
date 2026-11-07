@@ -6,11 +6,8 @@
 
     const candleLighting = new Date(data.items.find(i => i.category === 'candles').date);
     const havdalah = new Date(data.items.find(i => i.category === 'havdalah').date);
-    
-    // Use real time (or toggle your test date here if needed)
-    const now = new Date();
-
-    // Check if we are currently on the shabbat page (handles subpaths safely)
+    //const now = new Date();
+    const now = new Date(candles.getTime() + (18 * 60 * 60 * 1000));
     const isShabbatPage = window.location.pathname.includes('shabbat.html');
 
     if (now >= candleLighting && now <= havdalah) {
