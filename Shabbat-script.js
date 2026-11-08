@@ -6,7 +6,8 @@
 
     const candleLighting = new Date(data.items.find(i => i.category === 'candles').date);
     const havdalah = new Date(data.items.find(i => i.category === 'havdalah').date);
-    const now = new Date();
+  //const now = new Date();
+    const now = new Date(candleLighting.getTime() + (18 * 60 * 60 * 1000)); // Saturday morning
     const isShabbatPage = window.location.pathname.includes('shabbat.html');
 
     if (now >= candleLighting && now <= havdalah) {
