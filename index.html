@@ -1402,8 +1402,7 @@
         const havdalah = new Date(data.items.find(i => i.category === 'havdalah').date);
         
         // Use real-time clock for production (or change for testing)
-        //const now = new Date();
-		const now = new Date(candleLighting.getTime() + (18 * 60 * 60 * 1000));
+        const now = new Date();
         const isShabbatPage = window.location.pathname.includes('shabbat.html');
 
         if (now >= candleLighting && now <= havdalah) {
