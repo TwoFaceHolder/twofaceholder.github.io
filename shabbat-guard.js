@@ -1,14 +1,17 @@
 (function () {
   "use strict";
+
   const GEONAME_ID = "295530";      // Be'er Sheva - change to your city if you like
   const CACHE_KEY = "shabbatTimes";
   const FAILSAFE_MS = 3000;         // reveal page if the check hangs
 
   const TEST_NOW = null;
- // const TEST_NOW = new Date("2026-11-14T10:00:00+02:00"); // pretends it's Shabbat
+  const thisScript = document.currentScript;
+  const onShabbatPage = !!thisScript && thisScript.dataset.page === "shabbat";
 
-  const onShabbatPage = /shabbat\.html$/i.test(location.pathname);
-  const basePath = location.pathname.replace(/[^/]*$/, "");
+  // Folder where the site lives, taken from the script's own location
+  const scriptUrl = new URL(thisScript ? thisScript.src : location.href);
+  const basePath = scriptUrl.pathname.replace(/[^/]*$/, "");
   const target = onShabbatPage ? basePath : basePath + "shabbat.html";
 
   // Hide the page until we know which page should be shown (prevents flicker)
