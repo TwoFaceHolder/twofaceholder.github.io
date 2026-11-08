@@ -337,7 +337,7 @@
         .live-badge {
             position: absolute;
             z-index: 3;
-            top: -10px;
+            top: -14px;
             left: -12px;
             display: none;
             align-items: center;
@@ -347,7 +347,7 @@
             background: #fff;
             color: #000;
             font-family: Verdana, sans-serif;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: bold;
             letter-spacing: 1px;
             pointer-events: none;
@@ -702,6 +702,28 @@
                         <img src="Instagram.png" class="button-bg-icon" alt="" aria-hidden="true">
                     </a>
                 </div>
+				
+				<div class="social-link-wrapper">
+					<a
+						href="https://kick.com/twoface-yda"
+						target="_blank"
+						rel="noopener noreferrer"
+						id="kick-link"
+						class="social-link"
+						data-dialogue="Catch my streams on Kick!"
+						data-img="Dialogue7.png"
+					>
+						<span class="link-title">Kick</span>
+						<span class="button-top-right">
+							<span id="kick-viewers" class="follower-count live-viewer-count"></span>
+							<span id="kick-status-dot" class="status-dot dot-gray is-hidden"></span>
+							<span id="kick-count" class="follower-count">--</span>
+							<span class="status-dot dot-gray" aria-hidden="true"></span>
+						</span>
+						<img src="Kick.png" class="button-bg-icon" alt="" aria-hidden="true">
+					</a>
+					<div id="kick-live-badge" class="live-badge">LIVE NOW</div>
+				</div>
 
 				<div class="social-link-wrapper">
 					<a
@@ -1392,6 +1414,65 @@
         } else {
             initializeApp();
         }
+
+        (function kickStatus() {
+            const KICK_SLUG = "twoface-yda"; 
+
+            
+            function formatCount(el, value) {
+                const n = Number(value);
+                el.textContent = n >= 10000 ? n.toLocaleString() : String(n);
+                el.classList.toggle("shrink-text", n >= 10000);
+            }
+
+            async function updateKick() {
+                const count = document.getElementById("kick-count");
+                const viewers = document.getElementById("kick-viewers");
+                const dot = document.getElementById("kick-status-dot");
+                const badge = document.getElementById("kick-live-badge");
+                if (!count) return;
+
+                try {
+                    const res = await fetch(
+                        "https://kick.com/api/v2/channels/" + KICK_SLUG,
+                        { headers: { Accept: "application/json" } }
+                    );
+                    if (!res.ok) throw new Error("Kick status " + res.status);
+                    const data = await res.json();
+
+                    const live =
+                        !!data.livestream && data.livestream.is_live !== false;
+
+                    if (data.followers_count != null) {
+                        formatCount(count, data.followers_count);
+                    }
+
+                    if (badge) badge.classList.toggle("is-live", live);
+
+                    if (dot) {
+                        dot.classList.toggle("dot-red", live);
+                        dot.classList.toggle("dot-gray", !live);
+                        dot.classList.toggle("is-hidden", !live);
+                    }
+
+                    if (viewers) {
+                        if (live && data.livestream.viewer_count != null) {
+                            formatCount(viewers, data.livestream.viewer_count);
+                        } else {
+                            viewers.textContent = "";
+                            viewers.classList.remove("shrink-text");
+                        }
+                    }
+                } catch (err) {
+                    console.error("Kick check failed:", err);
+                }
+            }
+
+            updateKick();
+            setInterval(() => {
+                if (!document.hidden) updateKick();
+            }, 60000);
+        })();
     </script>
 </body>
 </html>
