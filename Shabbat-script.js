@@ -6,18 +6,22 @@
 
     const candleLighting = new Date(data.items.find(i => i.category === 'candles').date);
     const havdalah = new Date(data.items.find(i => i.category === 'havdalah').date);
+    
+    // Use real-time for production (or your test override if testing)
     const now = new Date();
-    const isShabbatPage = window.location.pathname.includes('shabbat.html');
+
+    // Case-insensitive check prevents GitHub Pages uppercase/lowercase bugs
+    const currentPath = window.location.pathname.toLowerCase();
+    const isShabbatPage = currentPath.includes('shabbat.html');
 
     if (now >= candleLighting && now <= havdalah) {
-      // It's Shabbat — redirect to the Shabbat page if not already there
+      // It's Shabbat — redirect to the Shabbat page ONLY if not already there
       if (!isShabbatPage) {
-        // Automatically grabs the repository folder prefix (e.g., /shabbat/)
         const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         window.location.href = basePath + 'shabbat.html';
       }
     } else {
-      // Not Shabbat — if visitor is on shabbat.html, redirect back home
+      // Not Shabbat — redirect back home ONLY if currently stuck on the shabbat page
       if (isShabbatPage) {
         const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
         window.location.href = basePath + 'index.html';
