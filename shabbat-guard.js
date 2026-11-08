@@ -1,18 +1,10 @@
-/*
- * shabbat-guard.js
- * Include in <head> of BOTH index.html and shabbat.html (before anything else).
- * Both pages use this same logic, so they always agree and never loop.
- */
 (function () {
   "use strict";
-
   const GEONAME_ID = "295530";      // Be'er Sheva - change to your city if you like
   const CACHE_KEY = "shabbatTimes";
   const FAILSAFE_MS = 3000;         // reveal page if the check hangs
 
-  // TESTING: set to a Date to fake the current time, e.g.
-  //   new Date("2026-11-14T10:00:00+02:00")   -> pretends it's Shabbat morning
-  // Leave as null for the real time.
+  const TEST_NOW = null;
   const TEST_NOW = new Date("2026-11-14T10:00:00+02:00"); // pretends it's Shabbat
 
   const onShabbatPage = /shabbat\.html$/i.test(location.pathname);
