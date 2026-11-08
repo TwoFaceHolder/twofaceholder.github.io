@@ -13,7 +13,7 @@
   // TESTING: set to a Date to fake the current time, e.g.
   //   new Date("2026-11-14T10:00:00+02:00")   -> pretends it's Shabbat morning
   // Leave as null for the real time.
-  const TEST_NOW = null;
+  const TEST_NOW = new Date("2026-11-14T10:00:00+02:00"); // pretends it's Shabbat
 
   const onShabbatPage = /shabbat\.html$/i.test(location.pathname);
   const basePath = location.pathname.replace(/[^/]*$/, "");
