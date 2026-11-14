@@ -15,7 +15,7 @@ main {
 	align-items: center;
 	text-align: center;
 	width: 100%;
-	max-width: 700px;
+	max-width: 900px;
 }
 
 @font-face {
@@ -27,9 +27,9 @@ main {
 }
 
 .shabbat-title {
-	font-size: clamp(4rem, 15vw, 10.1rem);	
+	font-size: clamp(5rem, 18vw, 13rem);	
 	font-family: 'Flavors', sans-serif;
-	margin: 0 0 10px 0;
+	margin: 0 0 0px 0;
 	
 	background-image: url('ShabbatTitlePattern.png');
 	background-size: 200px 200px;
@@ -53,10 +53,10 @@ main {
 }
 
 .paragraph {
-	font-size: clamp(1.1rem, 4vw, 1.5rem);
+	font-size: clamp(1.3rem, 5vw, 1.9rem);
 	color: #419389;
 	width: 100%;
-	max-width: 500px;
+	max-width: 650px;
 	height: auto;
 	box-sizing: border-box;
 	padding: 0 15px;
@@ -65,7 +65,7 @@ main {
 .shabbat-image {
 	display: block;
 	max-width: 100%;
-	width: 400px;
+	width: 600px;
 	height: auto;
 	margin: 30px auto 0 auto;
 }
