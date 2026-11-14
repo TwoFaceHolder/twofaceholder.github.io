@@ -53,10 +53,10 @@ main {
 }
 
 .paragraph {
-	font-size: clamp(1.3rem, 5vw, 1.9rem);
+	font-size: clamp(1.3rem, 5vw, 1.5rem);
 	color: #419389;
 	width: 100%;
-	max-width: 650px;
+	max-width: 500px;
 	height: auto;
 	box-sizing: border-box;
 	padding: 0 15px;
