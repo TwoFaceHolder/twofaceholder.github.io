@@ -1,10 +1,12 @@
 html, body {
 	margin: 0;
-	height: 100vh;
+	min-height: 100vh;
 	background-color: #eadbbd;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	padding: 20px; 
+	box-sizing: border-box;
 }	
 
 main {
@@ -12,6 +14,8 @@ main {
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
+	width: 100%;
+	max-width: 700px;
 }
 
 @font-face {
@@ -23,9 +27,9 @@ main {
 }
 
 .shabbat-title {
-	font-size: 10rem;	
+	font-size: clamp(4rem, 15vw, 10.1rem);	
 	font-family: 'Flavors', sans-serif;
-	margin: 0;
+	margin: 0 0 10px 0;
 	
 	background-image: url('ShabbatTitlePattern.png');
 	background-size: 200px 200px;
@@ -36,30 +40,32 @@ main {
 	-webkit-text-fill-color: transparent;
 	
 	animation: scrollbg 10s linear infinite; 
-	filter: drop-shadow(8px 8px 3px rgba(0, 0, 0, 0.2));
+	filter: drop-shadow(6px 6px 3px rgba(0, 0, 0, 0.2));
 }
 
 @keyframes scrollbg {
 	0% {
 		background-position: 0px 0px;
 	}
-	
 	100% {
 		background-position: 200px 200px;
 	}
 }
 
 .paragraph {
-	font-size: 1.5rem;
+	font-size: clamp(1.1rem, 4vw, 1.5rem);
 	color: #419389;
-	width: 500px;
+	width: 100%;
+	max-width: 500px;
 	height: auto;
+	box-sizing: border-box;
+	padding: 0 15px;
 }
 
 .shabbat-image {
-	justify-content: center;
-	align-items: center;
-	max-width: 700px;
+	display: block;
+	max-width: 100%;
+	width: 400px;
 	height: auto;
-	margin: 40px;
+	margin: 30px auto 0 auto;
 }
